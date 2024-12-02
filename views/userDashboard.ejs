@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    h1,
+    p {
+      margin: 10px 0;
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #007BFF;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .alert.success {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    hr {
+      margin: 20px 0;
+      width: 100%;
+      border: 1px solid #ccc;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    ul li {
+      background-color: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    select {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .actions-wrapper {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .actions-wrapper form {
+      display: inline-block;
+    }
+
+    button {
+      padding: 8px 15px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .reason-input-wrapper {
+      margin-top: 10px;
+      display: none;
+      text-align: left;
+    }
+
+    .reason-input-wrapper textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      resize: vertical;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Welcome, <%= user.name ? user.name : "User" %>!</h1>
+  <p>Role: <%= user.role ? user.role : "No role assigned" %>
+  </p>
+
+  <% if (alertMessage) { %>
+    <div class="alert success">
+      <%= alertMessage %>
+    </div>
+    <% } %>
+
+      <br>
+      <nav>
+        <% if (user.canPostNews) { %>
+          <a href="/user/add-news">Add News Post</a>
+          <% } %>
+            <a href="/user/profile">Profile</a>
+            <a href="/auth/logout">Logout</a>
+      </nav>
+
+      <hr>
+
+      <% if (user.canViewNews) { %>
+        <h2>News Posts</h2>
+        <% if (newsPosts && newsPosts.length> 0) { %>
+          <ul>
+            <% newsPosts.forEach(post=> { %>
+              <li>
+                <div class="post-info">
+                  <div>
+                    <strong>Posted on:</strong> <span>
+                      <%= new Date(post.datePosted).toLocaleString() %>
+                    </span>
+                  </div>
+                  <div>
+                    <strong>Uploaded by:</strong>
+                    <span>
+                      <%= post.uploadedBy.name ? post.uploadedBy.name : "Unknown" %>
+                    </span>
+                    <% if (post.uploadedBy.role==='moderator' ) { %>
+                      <span>✅</span>
+                      <% } %>
+                  </div>
+                </div>
+                <div class="content">
+                  <strong>Content:</strong>
+                  <p>
+                    <%= post.content %>
+                  </p>
+                </div>
+              </li>
+              <% }); %>
+          </ul>
+
+          <% } else { %>
+            <p>No news posts available at the moment.</p>
+            <% } %>
+              <% } %>
+
+</body>
+
+</html>

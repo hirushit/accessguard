@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    h1,
+    h2,
+    h3 {
+      text-align: center;
+    }
+
+    .dashboard-sections {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .section {
+      width: 30%;
+      background-color: white;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      height: 400px;
+      overflow-y: auto;
+      border-radius: 8px;
+    }
+
+    .section h3 {
+      text-align: center;
+    }
+
+    .logout,
+    .create-links {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    .logout:hover,
+    .create-links a:hover {
+      text-decoration: underline;
+    }
+
+    .create-links {
+      margin-top: 20px;
+    }
+
+    .create-links a {
+      margin: 0 10px;
+    }
+
+    .message {
+      padding: 10px;
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      border-radius: 5px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Admin Dashboard</h1>
+  <h2>Welcome!</h2>
+
+  <% if (message) { %>
+    <div class="message <%= message.includes('failed') ? 'error' : '' %>">
+      <%= message %>
+    </div>
+    <% } %>
+
+
+      <div class="create-links">
+        <a href="/admin/create-user">Create New User</a>
+        <a href="/admin/create-news">Add News Post</a>
+        <a href="/admin/view-reported-posts">View Reported Posts</a>
+        <a href="/admin/change-password">Change My Password</a>
+      </div>
+
+      <a href="/auth/logout" class="logout">Logout</a>
+
+      <div class="dashboard-sections">
+
+
+        <div class="section">
+          <h3>Manage Users</h3>
+          <ul>
+            <% users.filter(user=> user.role === 'user').forEach(user => { %>
+              <li>
+                <%= user.name %> - <%= user.email %> - <%= user.role %>
+                      <form action="/admin/update-role/<%= user._id %>" method="POST">
+                        <select name="role">
+                          <option value="user" <%=user.role==='user' ? 'selected' : '' %>>User</option>
+                          <option value="moderator" <%=user.role==='moderator' ? 'selected' : '' %>>Moderator</option>
+                          <option value="admin" <%=user.role==='admin' ? 'selected' : '' %>>Admin</option>
+                        </select>
+                        <button type="submit">Update Role</button>
+                      </form>
+                      <a href="/admin/edit-user/<%= user._id %>">Edit</a>
+                      <a href="/admin/delete-user/<%= user._id %>">Delete</a> <br><br>
+              </li>
+              <% }) %>
+          </ul>
+        </div>
+
+        <div class="section">
+          <h3>Manage Moderators</h3>
+          <ul>
+            <% users.filter(user=> user.role === 'moderator').forEach(user => { %>
+              <li>
+                <%= user.name %> - <%= user.email %> - <%= user.role %>
+                      <form action="/admin/update-moderator-role/<%= user._id %>" method="POST">
+                        <select name="role">
+                          <option value="user" <%=user.role==='user' ? 'selected' : '' %>>User</option>
+                          <option value="moderator" <%=user.role==='moderator' ? 'selected' : '' %>>Moderator</option>
+                          <option value="admin" <%=user.role==='admin' ? 'selected' : '' %>>Admin</option>
+                        </select>
+                        <button type="submit">Update Role</button>
+                      </form>
+                      <a href="/admin/edit-user/<%= user._id %>">Edit</a>
+                      <a href="/admin/delete-user/<%= user._id %>">Delete</a> <br><br>
+              </li>
+              <% }) %>
+          </ul>
+        </div>
+
+
+        <div class="section">
+          <h3>Manage News Posts</h3>
+          <ul>
+            <% newsPosts.forEach(post=> { %>
+              <li>
+                <strong>Content:</strong>
+                <%= post.content %> <br>
+                  <strong>Posted on:</strong>
+                  <%= new Date(post.datePosted).toLocaleString() %> <br>
+                    <strong>Uploaded by:</strong>
+                    <%= post.uploadedBy.name %> <br>
+                      <form action="/admin/update-news/<%= post._id %>" method="POST">
+                        <label for="visibility">Visibility:</label>
+                        <select name="visibility">
+                          <option value="true" <%=post.visibility ? 'selected' : '' %>>Visible</option>
+                          <option value="false" <%=!post.visibility ? 'selected' : '' %>>Hidden</option>
+                        </select>
+                        <label for="priority">Priority:</label>
+                        <select name="priority">
+                          <option value="high" <%=post.priority==='high' ? 'selected' : '' %>>High</option>
+                          <option value="medium" <%=post.priority==='medium' ? 'selected' : '' %>>Medium</option>
+                          <option value="low" <%=post.priority==='low' ? 'selected' : '' %>>Low</option>
+                        </select>
+                        <button type="submit">Update</button>
+                      </form>
+                      <a href="/admin/delete-news/<%= post._id %>">Delete</a><br><br>
+              </li>
+              <% }) %>
+          </ul>
+        </div>
+
+      </div>
+
+</body>
+
+</html>
