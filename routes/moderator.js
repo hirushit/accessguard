@@ -5,6 +5,7 @@
 // Required modules and configurations
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const argon2 = require("argon2");
 const User = require("../models/User");
 const NewsPost = require("../models/NewsPost");
 const router = express.Router();
